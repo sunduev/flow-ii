@@ -1,0 +1,88 @@
+{
+  "editions": [
+    {
+      "file": "source/tournament-with-players-1082-2001.xlsx",
+      "name": "ЧР — 2001"
+    },
+    {
+      "file": "source/tournament-with-players-1224-2002.xlsx",
+      "name": "ЧР — 2002"
+    },
+    {
+      "file": "source/tournament-with-players-1369-2003.xlsx",
+      "name": "ЧР — 2003"
+    },
+    {
+      "file": "source/tournament-with-players-22-2004.xlsx",
+      "name": "ЧР — 2004"
+    },
+    {
+      "file": "source/tournament-with-players-76-2005.xlsx",
+      "name": "ЧР — 2005"
+    },
+    {
+      "file": "source/tournament-with-players-141-2006.xlsx",
+      "name": "ЧР — 2006"
+    },
+    {
+      "file": "source/tournament-with-players-226-2007.xlsx",
+      "name": "ЧР — 2007"
+    },
+    {
+      "file": "source/tournament-with-players-315-2008.xlsx",
+      "name": "ЧР — 2008"
+    },
+    {
+      "file": "source/tournament-with-players-484-2009.xlsx",
+      "name": "ЧР — 2009"
+    },
+    {
+      "file": "source/tournament-with-players-583-2010.xlsx",
+      "name": "ЧР — 2010"
+    },
+    {
+      "file": "source/tournament-with-players-1710-2011.xlsx",
+      "name": "ЧР — 2011"
+    },
+    {
+      "file": "source/tournament-with-players-1983-2012.xlsx",
+      "name": "ЧР — 2012"
+    },
+    {
+      "file": "source/tournament-with-players-2117-2013.xlsx",
+      "name": "ЧР — 2013"
+    },
+    {
+      "file": "source/tournament-with-players-2813-2014.xlsx",
+      "name": "ЧР — 2014"
+    },
+    {
+      "file": "source/tournament-with-players-3099-2015.xlsx",
+      "name": "ЧР — 2015"
+    },
+    {
+      "file": "source/tournament-with-players-3825-2016.xlsx",
+      "name": "ЧР — 2016"
+    },
+    {
+      "file": "source/tournament-with-players-4247-2017.xlsx",
+      "name": "ЧР — 2017"
+    },
+    {
+      "file": "source/tournament-with-players-4936-2018.xlsx",
+      "name": "ЧР — 2018"
+    },
+    {
+      "file": "source/tournament-with-players-5465-2019.xlsx",
+      "name": "ЧР — 2019"
+    },
+    {
+      "file": "source/tournament-with-players-11749-2025.xlsx",
+      "name": "ЧР — 2025"
+    },
+    {
+      "file": "source/tournament-with-players-12826-2026.xlsx",
+      "name": "ЧР — 2026"
+    }
+  ]
+}

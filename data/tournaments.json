@@ -1,0 +1,17 @@
+{
+  "defaultTournament": "chr",
+  "tournaments": [
+    {
+      "slug": "chr",
+      "name": "ЧР",
+      "sources": "data/tournaments/chr/sources.json",
+      "history": "data/chr/history.json"
+    },
+    {
+      "slug": "studchr",
+      "name": "СтудЧР",
+      "sources": "data/tournaments/studchr/sources.json",
+      "history": "data/studchr/history.json"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": "src",
+    "outDir": ".test-build",
+    "types": [],
+    "lib": [
+      "ES2022", "DOM"
+    ]
+  },
+  "include": [
+    "src/model/types.ts",
+    "src/model/load-history.ts",
+    "src/model/tournament-page.ts",
+    "src/model/count-label.ts",
+    "src/history/**/*.ts",
+    "src/diagram/geometry.ts",
+    "src/diagram/team-info-events.ts",
+    "src/diagram/team-info-position.ts",
+    "src/diagram/pan.ts",
+    "src/diagram/zoom.ts"
+  ]
+}

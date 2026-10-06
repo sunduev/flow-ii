@@ -1,0 +1,138 @@
+{
+  "dataset": "./demo-history.json",
+  "isSyntheticHistory": true,
+  "sourceFile": "tournament-with-players-12826.xlsx",
+  "yearsChronological": [
+    2020,
+    2021,
+    2022,
+    2024,
+    2025,
+    2026
+  ],
+  "diagramYearsLeftToRight": [
+    2026,
+    2025,
+    2024,
+    2022,
+    2021,
+    2020
+  ],
+  "counts": {
+    "editions": 6,
+    "teams": 90,
+    "players": 574,
+    "participations": 540,
+    "rosterEntries": 3443
+  },
+  "initialSelection": {
+    "participationId": "2026:49804",
+    "playerIds": [
+      "27403",
+      "28751",
+      "30270",
+      "33620",
+      "37761",
+      "4270"
+    ]
+  },
+  "selectedParticipationId": "2024:27177",
+  "playerHistories": [
+    {
+      "playerId": "4270",
+      "name": "Брутер А.",
+      "participationIds": [
+        "2020:49804",
+        "2021:27177",
+        "2022:75592",
+        "2024:27177",
+        "2025:49804",
+        "2026:49804"
+      ],
+      "dashedLinks": []
+    },
+    {
+      "playerId": "27403",
+      "name": "Руссо М.",
+      "participationIds": [
+        "2020:49804",
+        "2021:49804",
+        "2024:49804",
+        "2025:49804",
+        "2026:49804"
+      ],
+      "dashedLinks": [
+        [
+          "2021:49804",
+          "2024:49804"
+        ]
+      ]
+    },
+    {
+      "playerId": "28751",
+      "name": "Семушин И.",
+      "participationIds": [
+        "2020:49804",
+        "2021:49804",
+        "2022:49804",
+        "2024:49804",
+        "2025:49804",
+        "2026:49804"
+      ],
+      "dashedLinks": []
+    }
+  ],
+  "rangeScenario": {
+    "selectedParticipationId": "2024:27177",
+    "selectedPlayerId": "4270",
+    "visibleYearsLeftToRight": [
+      2026,
+      2025
+    ],
+    "expectedSelectionPreserved": true,
+    "expectedFullHistoryPreserved": true,
+    "expectedVisibleLinks": [
+      [
+        "2025:49804",
+        "2026:49804"
+      ]
+    ]
+  },
+  "teamRename": {
+    "teamId": "49804",
+    "olderYears": [
+      2020,
+      2021
+    ],
+    "olderName": "Борский корабел (тестовое прежнее название)",
+    "laterName": "Борский корабел"
+  },
+  "fractionalPlace": {
+    "participationId": "2026:4109",
+    "place": 6.5
+  },
+  "sameFirstAndLastNamesDifferentIds": [
+    {
+      "playerIds": [
+        "147115",
+        "159877"
+      ],
+      "shortName": "Зайцев А.",
+      "namesByPlayerId": {
+        "147115": "Зайцев А.",
+        "159877": "Зайцев А."
+      }
+    },
+    {
+      "playerIds": [
+        "80561",
+        "8372"
+      ],
+      "shortName": "Губин А.",
+      "namesByPlayerId": {
+        "8372": "Губин А.",
+        "80561": "Губин А."
+      }
+    }
+  ]
+}

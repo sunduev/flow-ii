@@ -1,0 +1,194 @@
+<div id="tournament-history-preview" class="viz-dotted-background">
+  <section class="th-product" aria-label="Макет истории ежегодного турнира">
+    <header class="th-header">
+      <div><span class="th-eyebrow">ЕЖЕГОДНЫЙ ТУРНИР</span><h2>Команды и люди</h2></div>
+      <span class="th-demo">Вымышленные данные</span>
+    </header>
+    <div class="th-chart" aria-label="Команды по годам и занятым местам">
+      <svg class="th-connections" aria-hidden="true"></svg>
+      <div class="th-years"></div>
+    </div>
+    <div class="th-key"><span class="th-key-line"></span><span>Цепочки игроков выбранного состава</span></div>
+    <section class="th-details" aria-live="polite" aria-atomic="false">
+      <div class="th-detail-head"><div><span class="th-eyebrow">ВЫБРАННАЯ КОМАНДА</span><h3 class="th-team-title"></h3></div><span class="th-result"></span></div>
+      <div class="th-roster" aria-label="Игроки выбранного состава"></div>
+      <div class="th-history"></div>
+    </section>
+  </section>
+</div>
+<style>
+#tournament-history-preview { padding: 12px; background-color: transparent; }
+#tournament-history-preview .th-product {
+  --th-bg: light-dark(#ffffff, #171c24);
+  --th-text: light-dark(#203042, #e6edf6);
+  --th-muted: light-dark(#637184, #a7b5c7);
+  --th-border: light-dark(#e1e7ee, #364251);
+  --th-soft: light-dark(#f4f7fa, #222c39);
+  --th-active: light-dark(#244f85, #9bbffc);
+  --th-active-text: light-dark(#ffffff, #132840);
+  --th-path1: light-dark(#256ab5, #80b8fa);
+  --th-path2: light-dark(#b66a18, #efb574);
+  --th-path3: light-dark(#865ab8, #c3a0f1);
+  --th-linked: light-dark(#eaf2fb, #263d58);
+  color: var(--th-text); background: var(--th-bg); font-family: system-ui, sans-serif;
+  font-size: 14px; line-height: 1.5; border: 1px solid var(--th-border); border-radius: 16px;
+  padding: 24px; overflow: hidden;
+}
+#tournament-history-preview * { box-sizing: border-box; }
+#tournament-history-preview .th-header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: space-between; margin-bottom: 22px; padding-right: 60px; }
+#tournament-history-preview .th-eyebrow { color: var(--th-muted); font-size: 11px; letter-spacing: .09em; font-weight: 500; }
+#tournament-history-preview h2 { margin: 3px 0 0; font-size: 24px; font-weight: 500; letter-spacing: -.04em; }
+#tournament-history-preview h3 { margin: 4px 0 0; font-size: 19px; font-weight: 500; }
+#tournament-history-preview .th-demo { font-size: 12px; color: var(--th-muted); }
+#tournament-history-preview .th-chart { position: relative; }
+#tournament-history-preview .th-connections { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#tournament-history-preview .th-years { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+#tournament-history-preview .th-year-label { text-align: center; font-size: 16px; font-weight: 500; margin-bottom: 16px; }
+#tournament-history-preview .th-nodes { display: grid; gap: 25px; }
+#tournament-history-preview .th-node { width: 100%; max-width: 122px; justify-self: center; min-height: 53px; padding: 6px; border: 1px solid var(--th-border); border-radius: 9px; background: var(--th-bg); color: var(--th-text); font: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; }
+#tournament-history-preview .th-rank { color: var(--th-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+#tournament-history-preview .th-node.th-related { background: var(--th-linked); }
+#tournament-history-preview .th-node[aria-pressed="true"] { background: var(--th-active); color: var(--th-active-text); border-color: var(--th-active); }
+#tournament-history-preview .th-node[aria-pressed="true"] .th-rank { color: inherit; }
+#tournament-history-preview .th-key { display: flex; align-items: center; gap: 8px; color: var(--th-muted); font-size: 12px; margin: 18px 0 22px; }
+#tournament-history-preview .th-key-line { width: 26px; height: 3px; background: var(--th-path1); border-radius: 2px; flex-shrink: 0; }
+#tournament-history-preview .th-details { border-top: 1px solid var(--th-border); padding-top: 20px; }
+#tournament-history-preview .th-detail-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+#tournament-history-preview .th-result { font-size: 12px; color: var(--th-muted); white-space: nowrap; }
+#tournament-history-preview .th-roster { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+#tournament-history-preview .th-player { background: var(--th-soft); color: var(--th-text); border: 1px solid transparent; padding: 8px 11px; border-radius: 7px; font: inherit; display: flex; align-items: center; gap: 7px; min-height: 38px; }
+#tournament-history-preview .th-player[aria-pressed="true"] { background: var(--th-active); color: var(--th-active-text); }
+#tournament-history-preview .th-swatch { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+#tournament-history-preview .th-history { margin-top: 18px; display: grid; gap: 13px; }
+#tournament-history-preview .th-history-row { display: grid; grid-template-columns: 120px minmax(0,1fr); align-items: center; gap: 12px; }
+#tournament-history-preview .th-history-name { font-size: 12px; color: var(--th-muted); }
+#tournament-history-preview .th-chain { display: flex; flex-wrap: wrap; gap: 5px 12px; font-size: 12px; align-items: center; }
+#tournament-history-preview .th-stop { display: inline-flex; gap: 5px; align-items: baseline; }
+#tournament-history-preview .th-stop-year { color: var(--th-muted); font-variant-numeric: tabular-nums; }
+#tournament-history-preview .th-arrow { color: var(--th-muted); }
+@media (max-width: 560px) {
+  #tournament-history-preview { padding: 6px; }
+  #tournament-history-preview .th-product { padding: 16px; }
+  #tournament-history-preview .th-header { padding-right: 65px; }
+  #tournament-history-preview .th-years { gap: 10px; }
+  #tournament-history-preview .th-node { flex-direction: column; gap: 0; font-size: 12px; min-height: 58px; }
+  #tournament-history-preview .th-year-label { font-size: 14px; }
+  #tournament-history-preview .th-history-row { grid-template-columns: 1fr; gap: 3px; }
+  #tournament-history-preview .th-detail-head { flex-wrap: wrap; gap: 6px; }
+}
+@media (pointer: coarse) { #tournament-history-preview .th-player { min-height: 44px; } }
+</style>
+<script>
+(() => {
+  const root = document.getElementById('tournament-history-preview');
+  const years = [2021, 2022, 2023, 2024];
+  const teams = { n: 'Север', v: 'Вектор', s: 'Искра', w: 'Волна' };
+  const players = { 1:'Демо А.', 2:'Пример П.', 3:'Пробный Д.', 4:'Макет О.', 5:'Тест И.', 6:'Образец И.', 7:'Схема В.', 8:'Эскиз О.', 9:'Рисунок М.', 10:'Шаблон Е.', 11:'Проект М.', 12:'Модель Н.' };
+  const editions = [
+    { year:2021, order:['n','v','s','w'], rosters:{ n:[1,2,3], v:[4,6,7], s:[5,8,10], w:[9,11,12] } },
+    { year:2022, order:['s','n','w','v'], rosters:{ n:[5,2,10], v:[1,4,7], s:[3,6,8], w:[9,11,12] } },
+    { year:2023, order:['n','v','w','s'], rosters:{ n:[2,7,10], v:[1,5,9], s:[3,6,8], w:[4,11,12] } },
+    { year:2024, order:['v','s','n','w'], rosters:{ n:[9,2,10], v:[5,4,7], s:[1,3,6], w:[8,11,12] } }
+  ];
+  const state = { year:2023, team:'v', player:null };
+  const appearance = { spacing:25 };
+  const q = s => root.querySelector(s);
+  const host = window.openai;
+  function applySaved(saved) {
+    const input = saved?.privateContent;
+    if (!input || !years.includes(input.year) || !teams[input.team]) return;
+    state.year = input.year; state.team = input.team;
+    const roster = editions.find(e => e.year === state.year).rosters[state.team];
+    state.player = roster.includes(input.player) ? input.player : null;
+  }
+  applySaved(host?.widgetState);
+  const teamAt = (edition, player) => Object.keys(edition.rosters).find(t => edition.rosters[t].includes(player));
+  q('.th-years').innerHTML = editions.map(e => `<section class="th-year"><div class="th-year-label">${e.year}</div><div class="th-nodes">${e.order.map((t,i) => `<button type="button" class="th-node cursor-interaction" data-year="${e.year}" data-team="${t}" aria-label="${teams[t]}, ${e.year}, ${i+1} место" aria-pressed="false"><span class="th-rank">${i+1}</span><span>${teams[t]}</span></button>`).join('')}</div></section>`).join('');
+  function save() {
+    if (!host?.setWidgetState) return;
+    const edition = editions.find(e => e.year === state.year);
+    host.setWidgetState({ modelContent:{ selectedYear:state.year, selectedTeam:teams[state.team], selectedPlayer:state.player ? players[state.player] : null, data:'Вымышленные данные макета' }, privateContent:{...state} }).catch(() => {});
+  }
+  const color = i => `var(--th-path${i+1})`;
+  function visiblePlayers() {
+    const roster = editions.find(e => e.year === state.year).rosters[state.team];
+    return state.player === null ? roster : [state.player];
+  }
+  function render() {
+    const edition = editions.find(e => e.year === state.year);
+    const roster = edition.rosters[state.team];
+    const visible = visiblePlayers();
+    root.querySelectorAll('.th-node').forEach(button => {
+      const e = editions.find(item => item.year === Number(button.dataset.year));
+      button.setAttribute('aria-pressed', String(e.year === state.year && button.dataset.team === state.team));
+      button.classList.toggle('th-related', visible.some(p => e.rosters[button.dataset.team].includes(p)));
+    });
+    q('.th-team-title').textContent = `${teams[state.team]} · ${state.year}`;
+    q('.th-result').textContent = `${edition.order.indexOf(state.team)+1} место`;
+    q('.th-roster').innerHTML = `<button type="button" class="th-player cursor-interaction" data-player="all" aria-pressed="${state.player===null}">Весь состав</button>` + roster.map((p,i) => `<button type="button" class="th-player cursor-interaction" data-player="${p}" aria-pressed="${state.player===p}"><span class="th-swatch" style="background:${color(i)}"></span>${players[p]}</button>`).join('');
+    q('.th-history').innerHTML = visible.map(p => `<div class="th-history-row"><span class="th-history-name">${players[p]}</span><div class="th-chain">${editions.map((e,i) => `<span class="th-stop"><span class="th-stop-year">${e.year}</span><span>${teams[teamAt(e,p)]}</span></span>${i < editions.length-1 ? '<span class="th-arrow" aria-hidden="true">→</span>' : ''}`).join('')}</div></div>`).join('');
+    q('.th-key-line').style.background = state.player === null ? color(0) : color(roster.indexOf(state.player));
+    q('.th-key span:last-child').textContent = state.player === null ? 'Полные цепочки игроков выбранного состава' : `Полная цепочка: ${players[state.player]}`;
+    draw();
+  }
+  function draw() {
+    const chart = q('.th-chart');
+    const rect = chart.getBoundingClientRect();
+    if (!rect.width) return;
+    const svg = q('.th-connections');
+    svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+    const points = new Map();
+    root.querySelectorAll('.th-node').forEach(button => {
+      const r = button.getBoundingClientRect();
+      points.set(`${button.dataset.year}-${button.dataset.team}`, { left:r.left-rect.left, right:r.right-rect.left, y:r.top-rect.top+r.height/2 });
+    });
+    function path(a,b,offset=0) {
+      const x1=a.right-1, x2=b.left+1, middle=(x1+x2)/2;
+      return `M${x1},${a.y+offset} C${middle},${a.y+offset} ${middle},${b.y+offset} ${x2},${b.y+offset}`;
+    }
+    let markup = '';
+    for(let i=0;i<editions.length-1;i++) {
+      const from = editions[i], to = editions[i+1], links = new Set();
+      Object.keys(players).forEach(id => links.add(`${teamAt(from,Number(id))}-${teamAt(to,Number(id))}`));
+      links.forEach(link => {
+        const [a,b]=link.split('-');
+        markup += `<path d="${path(points.get(`${from.year}-${a}`),points.get(`${to.year}-${b}`))}" fill="none" stroke="var(--th-border)" stroke-width="1.2" opacity=".65"/>`;
+      });
+    }
+    const roster = editions.find(e => e.year===state.year).rosters[state.team];
+    visiblePlayers().forEach(p => {
+      const idx=roster.indexOf(p), offset=(idx-1)*4;
+      for(let i=0;i<editions.length-1;i++) {
+        const from=editions[i], to=editions[i+1];
+        const a=points.get(`${from.year}-${teamAt(from,p)}`), b=points.get(`${to.year}-${teamAt(to,p)}`);
+        markup += `<path d="${path(a,b,offset)}" fill="none" stroke="${color(idx)}" stroke-width="2.4" stroke-linecap="round"/>`;
+      }
+    });
+    svg.innerHTML=markup;
+  }
+  q('.th-years').addEventListener('click', event => {
+    const button=event.target.closest('button[data-team]');
+    if(!button) return;
+    state.year=Number(button.dataset.year); state.team=button.dataset.team; state.player=null;
+    render(); save();
+  });
+  q('.th-roster').addEventListener('click', event => {
+    const button=event.target.closest('button[data-player]');
+    if(!button) return;
+    state.player=button.dataset.player==='all' ? null : Number(button.dataset.player);
+    render(); save();
+  });
+  window.addEventListener('openai:set_globals', event => {
+    const saved=event.detail?.globals?.widgetState;
+    if(saved) { applySaved(saved); render(); }
+  });
+  render();
+  new ResizeObserver(draw).observe(q('.th-chart'));
+  if(globalThis.Tweak) {
+    const tweak=new Tweak({container:q('.th-product'), onChange:() => {
+      root.querySelectorAll('.th-nodes').forEach(el => el.style.gap=`${appearance.spacing}px`); draw();
+    }});
+    tweak.addSlider(appearance,'spacing',{label:'Расстояние между местами', min:16, max:44, unit:'px'});
+  }
+})();
+</script>

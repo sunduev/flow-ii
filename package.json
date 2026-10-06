@@ -1,0 +1,31 @@
+{
+  "name": "chr-flow",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.scripts.json --noEmit",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "tsc -p tsconfig.test.json && tsc -p tsconfig.scripts.json && node --test tests/*.test.mjs",
+    "convert:xlsx": "tsc -p tsconfig.scripts.json && node .script-build/scripts/convert-xlsx.js"
+  },
+  "dependencies": {
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-shape": "^3.1.7",
+    "@types/node": "^26.6.4",
+    "exceljs": "^4.4.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
+  }
+}
