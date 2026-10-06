@@ -112,8 +112,9 @@ export function createTeamInfo(host: HTMLElement, index: HistoryIndex, getSelect
         player.type = 'button';
         player.className = 'roster-player';
         player.dataset.playerId = playerId;
+        player.setAttribute('aria-label', playerLabel(index, playerId));
         player.setAttribute('aria-pressed', String(selection.playerId === playerId));
-        player.append(marker, document.createTextNode(playerLabel(index, playerId)));
+        player.append(marker, document.createTextNode(index.playerById.get(playerId)!.name));
         if (selection.playerId === playerId) {
           const remove = document.createElement('span');
           remove.className = 'filter-remove';
@@ -123,7 +124,20 @@ export function createTeamInfo(host: HTMLElement, index: HistoryIndex, getSelect
         }
         player.addEventListener('click', () => choose(playerId));
         item.append(player);
-      } else item.append(marker, document.createTextNode(playerLabel(index, playerId)));
+      } else {
+        const name = document.createElement('span');
+        name.className = 'team-info-player-name';
+        name.append(marker, document.createTextNode(index.playerById.get(playerId)!.name));
+        item.append(name);
+      }
+      const profile = document.createElement('a');
+      profile.className = 'player-profile';
+      profile.href = `https://rating.chgk.info/players/${encodeURIComponent(playerId)}`;
+      profile.target = '_blank';
+      profile.rel = 'noopener noreferrer';
+      profile.textContent = `ID ${playerId}`;
+      profile.setAttribute('aria-label', `Профиль игрока ${index.playerById.get(playerId)!.name}, ID ${playerId} (новая вкладка)`);
+      item.append(profile);
       list.append(item);
     }
     card.replaceChildren(header, place, ...(roster ? [] : [caption]), list);
