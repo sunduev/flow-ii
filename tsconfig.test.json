@@ -19,6 +19,7 @@
     "src/diagram/team-info-events.ts",
     "src/diagram/team-info-position.ts",
     "src/diagram/pan.ts",
+    "src/diagram/pinch.ts",
     "src/diagram/zoom.ts"
   ]
 }

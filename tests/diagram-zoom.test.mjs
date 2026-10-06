@@ -1,8 +1,18 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { zoomScroll, zoomDiagram, sizeDiagramStage, enableDiagramDoubleClickZoom } from '../.test-build/diagram/zoom.js';
+import { zoomScroll, zoomDiagram, sizeDiagramStage, enableDiagramDoubleClickZoom, stepZoomScale } from '../.test-build/diagram/zoom.js';
 
 const view = { left: 700, top: 500, width: 600, height: 400, diagramWidth: 3000, diagramHeight: 2000 };
+test('Зум жестом сохраняет якорь под движущейся серединой пальцев', () => {
+  assert.deepEqual(zoomScroll(view, 1, 1.5, { x: 100, y: 50 }, { x: 130, y: 80 }), { left: 1070, top: 745 });
+  assert.deepEqual(zoomScroll(view, 1, 1, { x: 100, y: 50 }, { x: 130, y: 80 }), { left: 670, top: 470 });
+});
+test('Кнопки после плавного зума выбирают соседние уровни', () => {
+  for (const [scale, down, up] of [[.73, .67, .8], [1.1, 1, 1.25], [.5, .33, .67], [.1, .1, .25], [2, 1.5, 2]]) {
+    assert.equal(stepZoomScale(scale, -1), down);
+    assert.equal(stepZoomScale(scale, 1), up);
+  }
+});
 test('Уменьшение сохраняет координату центра в исходном SVG', () => {
   assert.deepEqual(zoomScroll(view, 1, .5), { left: 200, top: 150 });
 });

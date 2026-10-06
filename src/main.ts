@@ -8,7 +8,8 @@ import { initialSelection, selectParticipation, selectPlayer, togglePlayer, play
 import { renderDiagram } from './diagram';
 import { createTeamInfo } from './diagram/team-info';
 import { enableDiagramPan } from './diagram/pan';
-import { zoomDiagram, enableDiagramDoubleClickZoom, type ZoomPoint } from './diagram/zoom';
+import { zoomDiagram, enableDiagramDoubleClickZoom, clampDiagramScale, stepZoomScale, type ZoomPoint } from './diagram/zoom';
+import { enableDiagramPinchZoom } from './diagram/pinch';
 const status = document.querySelector<HTMLElement>('#load-status')!;
 async function start(): Promise<void> {
   // Vite не должен преобразовывать runtime URL каталога в URL статического ресурса.
@@ -35,8 +36,7 @@ async function start(): Promise<void> {
   const zoomOut = document.querySelector<HTMLButtonElement>('#zoom-out')!;
   const zoomReset = document.querySelector<HTMLButtonElement>('#zoom-reset')!;
   const zoomIn = document.querySelector<HTMLButtonElement>('#zoom-in')!;
-  const scales = [10, 25, 33, 50, 67, 80, 100, 125, 150, 200];
-  let scaleIndex = scales.indexOf(100);
+  let scale = 1;
   let compact = false;
   let resultsView = { left: 0, top: 0 };
   if (!selection.participationId) { status.textContent = 'Пока нет результатов турнира.'; }
@@ -55,25 +55,27 @@ async function start(): Promise<void> {
       compactButton.focus({ preventScroll: true });
     });
 
-    function changeScale(nextIndex: number, point?: ZoomPoint): void {
-      const previous = scales[scaleIndex] / 100;
-      const next = Math.max(0, Math.min(nextIndex, scales.length - 1));
-      if (next === scaleIndex) return;
-      scaleIndex = next;
+    function changeScale(nextScale: number, point?: ZoomPoint, destination?: ZoomPoint): void {
+      const previous = scale;
+      const next = clampDiagramScale(nextScale);
+      if (next === scale && !destination) return;
+      scale = next;
       teamInfo.hide();
-      zoomDiagram(diagram, previous, scales[scaleIndex] / 100, point);
+      zoomDiagram(diagram, previous, scale, point, destination);
       // Сохранённая прокрутка общей таблицы тоже выражена в масштабированных px.
-      const ratio = scales[scaleIndex] / 100 / previous;
+      const ratio = scale / previous;
       resultsView = { left: resultsView.left * ratio, top: resultsView.top * ratio };
-      zoomReset.textContent = `${scales[scaleIndex]}%`;
-      zoomReset.setAttribute('aria-label', `Масштаб ${scales[scaleIndex]}%. Вернуть 100%`);
-      zoomOut.disabled = scaleIndex === 0;
-      zoomIn.disabled = scaleIndex === scales.length - 1;
+      const percent = Math.round(scale * 100);
+      zoomReset.textContent = `${percent}%`;
+      zoomReset.setAttribute('aria-label', `Масштаб ${percent}%. Вернуть 100%`);
+      zoomOut.disabled = scale === .1;
+      zoomIn.disabled = scale === 2;
     }
-    zoomOut.addEventListener('click', () => changeScale(scaleIndex - 1));
-    zoomReset.addEventListener('click', () => changeScale(scales.indexOf(100)));
-    zoomIn.addEventListener('click', () => changeScale(scaleIndex + 1));
-    enableDiagramDoubleClickZoom(diagram, () => scales[scaleIndex] / 100, point => changeScale(scales.indexOf(100), point));
+    zoomOut.addEventListener('click', () => changeScale(stepZoomScale(scale, -1)));
+    zoomReset.addEventListener('click', () => changeScale(1));
+    zoomIn.addEventListener('click', () => changeScale(stepZoomScale(scale, 1)));
+    enableDiagramPinchZoom(diagram, () => scale, changeScale, () => teamInfo.hide());
+    enableDiagramDoubleClickZoom(diagram, () => scale, point => changeScale(1, point));
 
     function draw(): void {
       teamInfo.hide();
@@ -98,7 +100,7 @@ async function start(): Promise<void> {
           selection = selectParticipation(selection, id);
           draw();
           diagram.querySelector<SVGGElement>(`[data-participation-id="${CSS.escape(id)}"]`)?.focus();
-        }, scales[scaleIndex] / 100);
+        }, scale);
       }
     }
 

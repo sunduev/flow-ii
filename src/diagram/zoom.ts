@@ -1,17 +1,33 @@
 export interface ZoomPoint { x: number; y: number }
 
+const scales = [.1, .25, .33, .5, .67, .8, 1, 1.25, 1.5, 2];
+
+export function clampDiagramScale(scale: number): number {
+  return Math.max(scales[0], Math.min(scale, scales.at(-1)!));
+}
+
+/** После жеста кнопка выбирает ближайший уровень в нужную сторону. */
+export function stepZoomScale(scale: number, direction: -1 | 1): number {
+  return direction === 1
+    ? scales.find(value => value > scale) ?? scales.at(-1)!
+    : [...scales].reverse().find(value => value < scale) ?? scales[0];
+}
+
 export interface ZoomViewport {
   left: number; top: number; width: number; height: number;
   diagramWidth: number; diagramHeight: number;
 }
 
-/** Сохраняет центр либо помещает точку клика в центр, с ограничением на краях. */
-export function zoomScroll(view: ZoomViewport, previousScale: number, scale: number, point?: ZoomPoint): { left: number; top: number } {
-  function axis(offset: number, viewport: number, diagram: number, anchor: number): number {
-    const next = (offset + anchor) / previousScale * scale - viewport / 2;
+/** Переносит якорь к новой точке жеста либо к центру окна, с ограничением на краях. */
+export function zoomScroll(view: ZoomViewport, previousScale: number, scale: number, point?: ZoomPoint, destination?: ZoomPoint): { left: number; top: number } {
+  function axis(offset: number, viewport: number, diagram: number, anchor: number, target: number): number {
+    const next = (offset + anchor) / previousScale * scale - target;
     return Math.max(0, Math.min(next, diagram * scale - viewport));
   }
-  return { left: axis(view.left, view.width, view.diagramWidth, point?.x ?? view.width / 2), top: axis(view.top, view.height, view.diagramHeight, point?.y ?? view.height / 2) };
+  return {
+    left: axis(view.left, view.width, view.diagramWidth, point?.x ?? view.width / 2, destination?.x ?? view.width / 2),
+    top: axis(view.top, view.height, view.diagramHeight, point?.y ?? view.height / 2, destination?.y ?? view.height / 2),
+  };
 }
 
 export function sizeDiagramStage(stage: HTMLElement, svg: SVGSVGElement, scale: number): void {
@@ -28,14 +44,14 @@ export function sizeDiagramStage(stage: HTMLElement, svg: SVGSVGElement, scale: 
 }
 
 /** Меняет только размеры обёртки, transform SVG и прокрутку. */
-export function zoomDiagram(host: HTMLElement, previousScale: number, scale: number, point?: ZoomPoint): void {
+export function zoomDiagram(host: HTMLElement, previousScale: number, scale: number, point?: ZoomPoint, destination?: ZoomPoint): void {
   const stage = host.querySelector<HTMLElement>('.diagram-stage');
   const svg = stage?.querySelector('svg');
   if (!stage || !svg) return;
   const scroll = zoomScroll({
     left: host.scrollLeft, top: host.scrollTop, width: host.clientWidth, height: host.clientHeight,
     diagramWidth: Number(svg.getAttribute('width')), diagramHeight: Number(svg.getAttribute('height')),
-  }, previousScale, scale, point);
+  }, previousScale, scale, point, destination);
   sizeDiagramStage(stage, svg, scale);
   host.scrollLeft = scroll.left;
   host.scrollTop = scroll.top;
