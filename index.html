@@ -2,11 +2,35 @@
 <html lang="ru">
 <head><meta charset="UTF-8"><meta name="robots" content="noindex, nofollow"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#ffffff"><title>Инфографика</title></head>
 <body><main>
-<p id="load-status" role="status">Загружаем историю турнира…</p>
+<div class="page-header"><p id="load-status" role="status">Загружаем историю турнира…</p>
+<button id="controls-help-button" type="button" hidden popovertarget="controls-help" aria-label="Как пользоваться диаграммой" title="Как пользоваться диаграммой"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v7"/><circle cx="12" cy="7" r="1" fill="currentColor" stroke="none"/></svg></button></div>
 <div id="workspace" hidden>
 <section class="results" aria-label="Результаты по годам">
-<div class="toolbar"><div class="period-controls" role="group" aria-label="Период"><span>Период</span><select id="from-year" aria-label="С года"></select><span aria-hidden="true">—</span><select id="to-year" aria-label="По год"></select></div><div class="zoom-controls" role="group" aria-label="Масштаб диаграммы"><button id="zoom-out" type="button" aria-label="Уменьшить диаграмму">−</button><button id="zoom-reset" type="button" title="Вернуть 100%. Alt/Option + колесо или два пальца меняют масштаб диаграммы; двойной клик приближает область до 100%." aria-label="Масштаб 100%. Вернуть 100%">100%</button><button id="zoom-in" type="button" aria-label="Увеличить диаграмму">+</button></div><button id="compact-mode" type="button" aria-pressed="false">Компактно</button><button id="all-rosters-mode" type="button" aria-pressed="false" title="Показать истории всех игроков команды за все годы">Все составы</button><button id="player-filter" class="player-filter" type="button" hidden><span id="player-filter-name"></span><span class="filter-remove" aria-hidden="true">×</span></button></div>
+<div class="toolbar"><div class="period-controls" role="group" aria-label="Период"><span>Период</span><select id="from-year" aria-label="С года"></select><span aria-hidden="true">—</span><select id="to-year" aria-label="По год"></select></div><div class="zoom-controls" role="group" aria-label="Масштаб диаграммы"><button id="zoom-out" type="button" aria-label="Уменьшить диаграмму">−</button><button id="zoom-reset" type="button" title="Вернуть 100%. Alt/Option + колесо или два пальца меняют масштаб диаграммы; двойной клик приближает область до 100%." aria-label="Масштаб 100%. Вернуть 100%">100%</button><button id="zoom-in" type="button" aria-label="Увеличить диаграмму">+</button></div><button id="compact-mode" type="button" aria-pressed="false">Компактно</button><button id="all-rosters-mode" type="button" aria-pressed="false" title="Показать связи всех игроков команды за все годы">Все составы</button><button id="player-filter" class="player-filter" type="button" hidden><span id="player-filter-name"></span><span class="filter-remove" aria-hidden="true">×</span></button></div>
 
+<div id="controls-help" class="controls-help" popover="auto" role="dialog" aria-labelledby="controls-help-title">
+<div class="controls-help-header"><h2 id="controls-help-title">Как пользоваться</h2><button type="button" popovertarget="controls-help" popovertargetaction="hide" aria-label="Закрыть подсказки" autofocus>×</button></div>
+<ul>
+<li><strong class="help-team-selected">Тёмно-зелёная</strong> — выбранная команда. По умолчанию показаны связи игроков этого состава.</li>
+<li><strong class="help-team-same">Светло-зелёные</strong> — та же команда в другие годы (тот же ID).</li>
+<li><strong class="help-team-other">Жёлтые</strong> — другие команды, за которые играли участники выбранного состава.</li>
+<li><strong><svg class="controls-help-icon" role="img" aria-label="Состав команды" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></strong> — открывает состав команды. Нажмите имя игрока, чтобы показать только его связи.</li>
+<li><strong><svg class="controls-help-icon controls-help-icon-chain" role="img" aria-label="Связь составов" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></strong> — показывает, кто из выбранного состава играл в этой команде.</li>
+</ul>
+<h3>Фильтры</h3>
+<ul>
+<li><strong>Компактно</strong> — скрывает несвязанные команды.</li>
+<li><strong>Все составы</strong> — показывает связи всех, кто когда-либо входил в состав команды.</li>
+<li><strong>Снять фильтр игрока</strong> — нажмите его имя ещё раз или × у фильтра, чтобы снова показать связи всех игроков.</li>
+</ul>
+<h3>Зум</h3>
+<ul>
+<li><strong>− / +</strong> — масштаб от 10 до 200%. Нажмите процент, чтобы вернуть 100%.</li>
+<li><strong>Alt/Option + колесо</strong> — меняет масштаб вокруг курсора.</li>
+<li><strong>На телефоне</strong> — разведите или сведите два пальца, чтобы изменить масштаб.</li>
+<li><strong>Двойной клик</strong> — возвращает 100%, если диаграмма уменьшена.</li>
+</ul>
+</div>
 <div id="diagram" class="diagram-scroll" tabindex="0" role="region" aria-label="Диаграмма результатов, доступна прокрутка и масштабирование двумя пальцами"></div></section>
 </div>
 <footer><p>Сделал <a href="https://t.me/il_sunduev" target="_blank" rel="noopener noreferrer">Илья Сундуев</a><span class="footer-divider" aria-hidden="true"> · </span>Вдохновлено <a href="https://astrofyz.github.io/studchr_flow/" target="_blank" rel="noopener noreferrer">Инфографикой СтудЧР</a></p></footer>

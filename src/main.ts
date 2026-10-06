@@ -44,6 +44,7 @@ async function start(): Promise<void> {
   if (!selection.participationId) { status.textContent = 'Пока нет результатов турнира.'; }
   else {
     document.querySelector<HTMLElement>('#workspace')!.hidden = false;
+    document.querySelector<HTMLButtonElement>('#controls-help-button')!.hidden = false;
     status.textContent = `${tournament.name} · ${countLabel(index.editions.length, ['турнир', 'турнира', 'турниров'])} · ${countLabel(index.teamById.size, ['команда', 'команды', 'команд'])} · ${countLabel(index.playerById.size, ['игрок', 'игрока', 'игроков'])}`;
     for (const edition of index.editions) for (const select of [from, to]) select.add(new Option(String(edition.year), String(edition.year)));
     from.value = String(index.editions[0].year); to.value = String(index.editions.at(-1)!.year);
