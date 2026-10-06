@@ -10,6 +10,8 @@ import { createTeamInfo } from './diagram/team-info';
 import { enableDiagramPan } from './diagram/pan';
 import { zoomDiagram, enableDiagramDoubleClickZoom, clampDiagramScale, stepZoomScale, type ZoomPoint } from './diagram/zoom';
 import { enableDiagramPinchZoom } from './diagram/pinch';
+import { enableDiagramWheelZoom } from './diagram/wheel';
+import { createZoomFrameUpdate } from './diagram/zoom-frame';
 const status = document.querySelector<HTMLElement>('#load-status')!;
 async function start(): Promise<void> {
   // Vite не должен преобразовывать runtime URL каталога в URL статического ресурса.
@@ -55,7 +57,10 @@ async function start(): Promise<void> {
       compactButton.focus({ preventScroll: true });
     });
 
-    function changeScale(nextScale: number, point?: ZoomPoint, destination?: ZoomPoint): void {
+    const zoomUpdate = createZoomFrameUpdate(() => scale, applyScale,
+      callback => window.requestAnimationFrame(callback), id => window.cancelAnimationFrame(id));
+
+    function applyScale(nextScale: number, point?: ZoomPoint, destination?: ZoomPoint): void {
       const previous = scale;
       const next = clampDiagramScale(nextScale);
       if (next === scale && !destination) return;
@@ -66,18 +71,33 @@ async function start(): Promise<void> {
       const ratio = scale / previous;
       resultsView = { left: resultsView.left * ratio, top: resultsView.top * ratio };
       const percent = Math.round(scale * 100);
-      zoomReset.textContent = `${percent}%`;
-      zoomReset.setAttribute('aria-label', `Масштаб ${percent}%. Вернуть 100%`);
-      zoomOut.disabled = scale === .1;
-      zoomIn.disabled = scale === 2;
+      const label = `${percent}%`;
+      if (zoomReset.textContent !== label) {
+        zoomReset.textContent = label;
+        zoomReset.setAttribute('aria-label', `Масштаб ${percent}%. Вернуть 100%`);
+      }
+      if (zoomOut.disabled !== (scale === .1)) zoomOut.disabled = scale === .1;
+      if (zoomIn.disabled !== (scale === 2)) zoomIn.disabled = scale === 2;
+    }
+    function changeScale(nextScale: number, point?: ZoomPoint): void {
+      zoomUpdate.cancel();
+      applyScale(nextScale, point);
     }
     zoomOut.addEventListener('click', () => changeScale(stepZoomScale(scale, -1)));
     zoomReset.addEventListener('click', () => changeScale(1));
     zoomIn.addEventListener('click', () => changeScale(stepZoomScale(scale, 1)));
-    enableDiagramPinchZoom(diagram, () => scale, changeScale, () => teamInfo.hide());
+    enableDiagramPinchZoom(diagram, () => scale, zoomUpdate.schedule, () => {
+      zoomUpdate.cancel();
+      teamInfo.hide();
+    });
+    enableDiagramWheelZoom(diagram, zoomUpdate.getScale, (next, point) => {
+      teamInfo.hide();
+      zoomUpdate.schedule(next, point, point);
+    });
     enableDiagramDoubleClickZoom(diagram, () => scale, point => changeScale(1, point));
 
     function draw(): void {
+      zoomUpdate.cancel();
       teamInfo.hide();
       playerFilter.hidden = selection.playerId === null;
       if (selection.playerId) {

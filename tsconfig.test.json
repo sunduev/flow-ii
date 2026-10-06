@@ -20,6 +20,8 @@
     "src/diagram/team-info-position.ts",
     "src/diagram/pan.ts",
     "src/diagram/pinch.ts",
+    "src/diagram/wheel.ts",
+    "src/diagram/zoom-frame.ts",
     "src/diagram/zoom.ts"
   ]
 }

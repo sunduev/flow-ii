@@ -2,8 +2,9 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { enableDiagramPinchZoom } from '../.test-build/diagram/pinch.js';
 import { zoomDiagram } from '../.test-build/diagram/zoom.js';
+import { createZoomFrameUpdate } from '../.test-build/diagram/zoom-frame.js';
 
-function setup(initialScale = 1) {
+function setup(initialScale = 1, batched = false) {
   const host = new EventTarget();
   host.ownerDocument = new EventTarget();
   host.clientLeft = host.clientTop = 1;
@@ -18,11 +19,16 @@ function setup(initialScale = 1) {
   let scale = initialScale;
   let starts = 0;
   const changes = [];
-  enableDiagramPinchZoom(host, () => scale, (next, anchor, point) => {
+  const frames = new Map();
+  let frameId = 0;
+  const apply = (next, anchor, point) => {
     changes.push(next);
     zoomDiagram(host, scale, next, anchor, point);
     scale = next;
-  }, () => { starts++; });
+  };
+  const queue = createZoomFrameUpdate(() => scale, apply,
+    callback => { frames.set(++frameId, callback); return frameId; }, id => frames.delete(id));
+  enableDiagramPinchZoom(host, () => scale, batched ? queue.schedule : apply, () => { starts++; queue.cancel(); });
   function touch(identifier, x, y = 100, target = host) { return { identifier, clientX: x + 21, clientY: y + 31, target }; }
   function send(type, touches = [], values = {}) {
     const event = new Event(type, { cancelable: true });
@@ -30,8 +36,23 @@ function setup(initialScale = 1) {
     (['touchend', 'touchcancel'].includes(type) ? host.ownerDocument : host).dispatchEvent(event);
     return event;
   }
-  return { host, svg, stage, child, send, touch, changes, scale: () => scale, starts: () => starts };
+  return { host, svg, stage, child, send, touch, changes, scale: () => scale, starts: () => starts, frames,
+    flush: () => { const callbacks = [...frames.values()]; frames.clear(); callbacks.forEach(callback => callback(0)); } };
 }
+
+test('Несколько движений и отпускание до кадра сохраняют последний масштаб и перемещение', () => {
+  const s = setup(1, true);
+  s.send('touchstart', [s.touch(1, 100), s.touch(2, 200)]);
+  s.send('touchmove', [s.touch(1, 90, 110), s.touch(2, 210, 110)]);
+  s.send('touchmove', [s.touch(1, 95, 120), s.touch(2, 245, 120)]);
+  s.send('touchend');
+  assert.equal(s.scale(), 1);
+  assert.equal(s.frames.size, 1);
+  s.flush();
+  assert.deepEqual(s.changes, [1.5]);
+  assert.equal(s.host.scrollLeft, 1105);
+  assert.equal(s.host.scrollTop, 780);
+});
 
 test('Растяжение и сжатие плавно масштабируют существующий SVG вокруг пальцев', () => {
   const s = setup();
